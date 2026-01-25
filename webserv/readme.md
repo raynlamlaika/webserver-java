@@ -37,9 +37,37 @@ or the requiste ...
 
 
 for the config file parcing i woill use ANTLR4
-there some about (atflr)
-Another Tool for Language Recognition
+***there some about (atflr)***
+    Another Tool for Language Recognition
+    the powerful parcer that we did use
 
+
+
+
+
+**about MAVEN**
+there is commond uses :
+
+
+why maven:
+
+
+dependancies installwith maven:
+ 
+
+
+**about  HTTP rquest**
+the mean project is all about this taken request
+
+--RequestLine--
+<Method> : he common method GET POST DELET PUT HEAD PATCH
+<URL/Path> : requested page from the server 
+<HTTP-Version> : Usually HTTP/1.1 or HTTP/2
+
+
+--Headers--
+
+--Body--
 
 
 

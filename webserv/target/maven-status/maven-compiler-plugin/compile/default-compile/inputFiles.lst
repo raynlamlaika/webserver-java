@@ -1,6 +1,6 @@
-/home/lamlaika/rayn/webserv/webserv/target/generated-sources/antlr4/com/example/app/NginxLexer.java
-/home/lamlaika/rayn/webserv/webserv/src/main/java/com/example/app/ServerInstance.java
-/home/lamlaika/rayn/webserv/webserv/src/main/java/com/example/app/App.java
-/home/lamlaika/rayn/webserv/webserv/target/generated-sources/antlr4/com/example/app/NginxListener.java
-/home/lamlaika/rayn/webserv/webserv/target/generated-sources/antlr4/com/example/app/NginxParser.java
-/home/lamlaika/rayn/webserv/webserv/target/generated-sources/antlr4/com/example/app/NginxBaseListener.java
+/goinfre/rlamlaik/java/webserv/src/main/java/com/example/app/ServerInstance.java
+/goinfre/rlamlaik/java/webserv/target/generated-sources/antlr4/com/example/app/NginxListener.java
+/goinfre/rlamlaik/java/webserv/src/main/java/com/example/app/App.java
+/goinfre/rlamlaik/java/webserv/target/generated-sources/antlr4/com/example/app/NginxParser.java
+/goinfre/rlamlaik/java/webserv/target/generated-sources/antlr4/com/example/app/NginxBaseListener.java
+/goinfre/rlamlaik/java/webserv/target/generated-sources/antlr4/com/example/app/NginxLexer.java

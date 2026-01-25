@@ -24,7 +24,6 @@ class ServerInstance {
                 '}';
     }
 
-
     void Runserver()
     {
         System.out.println("[Server starting] Port: " + port + ", Name: " + serverName);
@@ -63,20 +62,27 @@ class ServerInstance {
 
     private void handleClient(Socket clientSocket)
     {
+
+        // init resources inside the try ( ... ) to help  maange and free resoures avter the block
         try (
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)
         )
         {
             // Read HTTP request
+            String HttpRequist = "";
             String line;
             while ((line = in.readLine()) != null && !line.isEmpty())
             {
                 System.out.println("[Request] " + line);
+                HttpRequist += line;
             }
             
+            String p = "------------------------------------------------";
+            System.out.println("this is the REQUIST: + \n\n" + p + HttpRequist  + p +  "\n\n\n ");
             // Send HTTP response
             String body = responseBody != null ? responseBody.replace("\"", "") : "Hello from server!";
+            
             String response = "HTTP/1.1 200 OK\r\n" +
                              "Content-Type: text/plain\r\n" +
                              "Content-Length: " + body.length() + "\r\n" +

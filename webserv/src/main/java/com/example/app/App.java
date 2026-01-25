@@ -90,6 +90,7 @@ class App
             // Create Lexer and Parser
             NginxLexer lexer = new NginxLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
+            
             NginxParser parser = new NginxParser(tokens);
             // Parse starting from your root rule (example: config)
             NginxParser.ConfigContext tree = parser.config();

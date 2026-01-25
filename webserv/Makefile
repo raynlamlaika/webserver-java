@@ -27,6 +27,11 @@ run: package
 		java -jar target/webserv.jar $(CONFIG_FILE); \
 	fi
 
+dev:
+	./mvnw compile -q
+	./mvnw exec:java \
+		-Dexec.mainClass=com.example.app.App \
+		-Dexec.args="$(CONFIG_FILE)"
 # Watch and auto-rebuild on file changes
 watch:
 	@echo "[WATCH] Monitoring for file changes..."
@@ -38,6 +43,7 @@ watch:
 clean:
 	@echo "[CLEAN] Removing build artifacts..."
 	./mvnw clean
+
 
 # Full clean (like fclean in 42)
 fclean: clean
