@@ -40,14 +40,23 @@ for the config file parcing i woill use ANTLR4
 ***there some about (atflr)***
     Another Tool for Language Recognition
     the powerful parcer that we did use
+    --srcs--
+    https://dzone.com/articles/building-a-compiler-for-your-own-language-from-the-1
 
 
 
+
+JAR = packaged Java program
+it hold all of the base code and we can run it with the:
+ 	java -jar target/webserv.jar
 
 
 **about MAVEN**
-there is commond uses :
+lifecycle
+	clean → compile → test → package → install → deploy
 
+there is command uses :
+	
 
 why maven:
 
