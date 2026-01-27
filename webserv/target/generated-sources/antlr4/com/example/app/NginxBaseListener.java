@@ -29,25 +29,49 @@ public class NginxBaseListener implements NginxListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDirective(NginxParser.DirectiveContext ctx) { }
+	@Override public void enterSimpleDirective(NginxParser.SimpleDirectiveContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDirective(NginxParser.DirectiveContext ctx) { }
+	@Override public void exitSimpleDirective(NginxParser.SimpleDirectiveContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArgument(NginxParser.ArgumentContext ctx) { }
+	@Override public void enterStatement(NginxParser.StatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArgument(NginxParser.ArgumentContext ctx) { }
+	@Override public void exitStatement(NginxParser.StatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBlockDirective(NginxParser.BlockDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBlockDirective(NginxParser.BlockDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArguments(NginxParser.ArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArguments(NginxParser.ArgumentsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

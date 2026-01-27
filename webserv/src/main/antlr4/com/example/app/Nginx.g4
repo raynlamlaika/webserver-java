@@ -1,17 +1,51 @@
+
 grammar Nginx;
+/* Lexical rules */
+LBRACE  : '{' ;
 
-config: directive+;
+RBRACE  : '}' ;
 
-directive: WORD (argument)* SEMICOLON;
+SEMI    : ';' ;
 
-argument: WORD;
+IDENT
+    : [a-zA-Z_./] [a-zA-Z0-9_./:-]*
+    ;
 
-WORD: [a-zA-Z0-9_/:.\\-]+ | QUOTED_STRING;
-
-QUOTED_STRING: '"' (~["\r\n])* '"';
-
-SEMICOLON: ';';
-
-WS: [ \t\r\n]+ -> skip;
+NUMBER
+    : [0-9]+
+    ;
+STRING
+    : '"' (~["\r\n])* '"'
+    ;
 
 COMMENT: '#' ~[\r\n]* -> skip;
+
+/*Whitespace*/
+WS
+    : [ \t\r\n]+ -> skip
+    ;
+
+
+
+// ---------- PARSER RULES ----------
+
+config
+    : statement* EOF
+    ;
+
+simpleDirective
+    : IDENT arguments? SEMI
+    ;
+
+statement
+    : simpleDirective
+    | blockDirective
+    ;
+
+blockDirective
+    : IDENT arguments? LBRACE statement* RBRACE
+    ;
+
+arguments
+    : (IDENT | STRING | NUMBER)+
+    ;

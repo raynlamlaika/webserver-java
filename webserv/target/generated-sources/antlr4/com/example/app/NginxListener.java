@@ -18,23 +18,43 @@ public interface NginxListener extends ParseTreeListener {
 	 */
 	void exitConfig(NginxParser.ConfigContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link NginxParser#directive}.
+	 * Enter a parse tree produced by {@link NginxParser#simpleDirective}.
 	 * @param ctx the parse tree
 	 */
-	void enterDirective(NginxParser.DirectiveContext ctx);
+	void enterSimpleDirective(NginxParser.SimpleDirectiveContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link NginxParser#directive}.
+	 * Exit a parse tree produced by {@link NginxParser#simpleDirective}.
 	 * @param ctx the parse tree
 	 */
-	void exitDirective(NginxParser.DirectiveContext ctx);
+	void exitSimpleDirective(NginxParser.SimpleDirectiveContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link NginxParser#argument}.
+	 * Enter a parse tree produced by {@link NginxParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterArgument(NginxParser.ArgumentContext ctx);
+	void enterStatement(NginxParser.StatementContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link NginxParser#argument}.
+	 * Exit a parse tree produced by {@link NginxParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitArgument(NginxParser.ArgumentContext ctx);
+	void exitStatement(NginxParser.StatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link NginxParser#blockDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlockDirective(NginxParser.BlockDirectiveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link NginxParser#blockDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlockDirective(NginxParser.BlockDirectiveContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link NginxParser#arguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterArguments(NginxParser.ArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link NginxParser#arguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitArguments(NginxParser.ArgumentsContext ctx);
 }

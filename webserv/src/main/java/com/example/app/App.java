@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.*;
 
-import com.example.app.NginxLexer;
-import com.example.app.NginxParser;
-import com.example.app.NginxBaseListener;
-import com.example.app.ServerInstance;
+// import com.example.app.NginxLexer;
+// import com.example.app.NginxParser;
+// import com.example.app.NginxBaseListener;
+// import com.example.app.ServerInstance;
 
 
 
@@ -22,7 +22,8 @@ class App
 
     public static void main(String argv[])
     {
-        try
+        // will init the socket here to make auto close after finish
+        try 
         {
             System.out.println("the Webserver just STARTED");
             // opne  the file 
@@ -88,60 +89,31 @@ class App
             CharStream input = CharStreams.fromReader(reader);
 
             // Create Lexer and Parser
-            NginxLexer lexer = new NginxLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            
+            NginxLexer lexer = new NginxLexer(input); // split test based on he nginx.g4 file its like tokenizer cerat from alter4 based on filr.g4 
+            CommonTokenStream tokens = new CommonTokenStream(lexer); // parce the token test based on he nginx.g4 file 
+            // tokens.fill();  
+            // 4️⃣ Create the parser
             NginxParser parser = new NginxParser(tokens);
-            // Parse starting from your root rule (example: config)
+
+            // 5️⃣ Get the parse tree starting from 'config'
             NginxParser.ConfigContext tree = parser.config();
-            // Quick parse tree dump (Lisp-like form)
-            System.out.println("Parse tree: " + tree.toStringTree(parser));
-
-            // Walk the tree and print directives/arguments as they are encountered
-            ParseTreeWalker.DEFAULT.walk(new DebugPrintListener(parser), tree);
-
-            // Collect directives into a structured list for later use
-            DirectiveCollectorListener collector = new DirectiveCollectorListener();
-            ParseTreeWalker.DEFAULT.walk(collector, tree);
 
 
-            // Build server instances from collected directives (simple heuristic)
-            List<ServerInstance> servers = buildServers(collector.directives);
+
+            Parsing listener = new Parsing();
+
+            // 7️⃣ Walk the tree
+            ParseTreeWalker.DEFAULT.walk(listener, tree);
+
+            // here need to buil in ast object or just in class object hold all of the  data to work with it
             
-            System.out.println("\n=== Found " + servers.size() + " server(s) ===");
-            
-            // Start each server in a separate thread
-            List<Thread> serverThreads = new ArrayList<>();
-            for (int i = 0; i < servers.size(); i++)
-            {
-                final ServerInstance s = servers.get(i);
-                System.out.println("\n[Server #" + (i + 1) + "]");
-                System.out.println("  Port: " + s.port);
-                System.out.println("  Server Name: " + (s.serverName != null ? s.serverName : "not set"));
-                System.out.println("  Response: " + (s.responseBody != null ? s.responseBody : "not set"));
-                
-                // Run each server in its own thread
-                Thread serverThread = new Thread(() -> s.Runserver(), "Server-" + s.port);
-                serverThread.start();
-                serverThreads.add(serverThread);
-            }
-            
-            System.out.println("\n=== All servers started! Press Ctrl+C to stop ===");
-            
-            // Wait for all server threads
-            for (Thread t : serverThreads)
-            {
-                try
-                {
-                    t.join();
-                }
-                catch (InterruptedException e)
-                {
-                    System.err.println("Server thread interrupted: " + e.getMessage());
-                }
-            }
 
-            System.out.println("\nParsing done!");
+            // here the printer of the config file
+            // void configPrint( ConfigFile listener.configFile);
+
+             
+            System.out.println("\u001B[32m\t SUCCESS: All good!\u001B[0m");
+            
 
             reader.close();
 
@@ -168,84 +140,84 @@ class App
     }
 
     // Listener to print visited nodes; helps inspect the parsed nginx config
-    static class DebugPrintListener extends NginxBaseListener
-    {
-        private final NginxParser parser;
+    // static class DebugPrintListener extends NginxBaseListener
+    // {
+    //     private final NginxParser parser;
 
-        DebugPrintListener(NginxParser parser)
-        {
-            this.parser = parser;
-        }
+    //     DebugPrintListener(NginxParser parser)
+    //     {
+    //         this.parser = parser;
+    //     }
 
-        @Override
-        public void enterDirective(NginxParser.DirectiveContext ctx)
-        {
-            System.out.println("[directive] " + ctx.getText());
-        }
+    //     @Override
+    //     public void enterDirective(NginxParser.DirectiveContext ctx)
+    //     {
+    //         System.out.println("[directive] " + ctx.getText());
+    //     }
 
-        @Override
-        public void enterArgument(NginxParser.ArgumentContext ctx)
-        {
-            System.out.println("  [arg] " + ctx.getText());
-        }
-    }
+    //     @Override
+    //     public void enterArgument(NginxParser.ArgumentContext ctx)
+    //     {
+    //         System.out.println("  [arg] " + ctx.getText());
+    //     }
+    // }
 
-    // Listener that builds a simple list of directives and their arguments
-    static class DirectiveCollectorListener extends NginxBaseListener
-    {
-        final List<Directive> directives = new ArrayList<>();
+    // // Listener that builds a simple list of directives and their arguments
+    // static class DirectiveCollectorListener extends NginxBaseListener
+    // {
+    //     final List<Directive> directives = new ArrayList<>();
 
-        @Override
-        public void enterDirective(NginxParser.DirectiveContext ctx)
-        {
-            Directive d = new Directive();
-            d.name = ctx.getChild(0).getText(); // first token in rule is the directive name
-            for (NginxParser.ArgumentContext argCtx : ctx.argument())
-            {
-                d.args.add(argCtx.getText());
-            }
-            directives.add(d);
-        }
-    }
+    //     @Override
+    //     public void enterDirective(NginxParser.DirectiveContext ctx)
+    //     {
+    //         Directive d = new Directive();
+    //         d.name = ctx.getChild(0).getText(); // first token in rule is the directive name
+    //         for (NginxParser.ArgumentContext argCtx : ctx.argument())
+    //         {
+    //             d.args.add(argCtx.getText());
+    //         }
+    //         directives.add(d);
+    //     }
+    // }
 
-    // Simple data holder for a directive
-    static class Directive
-    {
-        String name;
-        List<String> args = new ArrayList<>();
-    }
+    // // Simple data holder for a directive
+    // static class Directive
+    // {
+    //     String name;
+    //     List<String> args = new ArrayList<>();
+    // }
 
     // Build server instances from flat directive list (assumes directives ordered as parsed)
-    static List<ServerInstance> buildServers(List<Directive> directives)
-    {
-        List<ServerInstance> servers = new ArrayList<>();
-        ServerInstance current = null;
+    // static List<ServerInstance> buildServers(List<Directive> directives)
+    // {
+    //     List<ServerInstance> servers = new ArrayList<>();
+    //     ServerInstance current = null;
 
-        for (Directive d : directives)
-        {
-            if ("server".equals(d.name) && d.args.size() >= 2 && "listen".equals(d.args.get(0)))
-            {
-                try
-                {
-                    int port = Integer.parseInt(d.args.get(1));
-                    current = new ServerInstance(port);
-                    servers.add(current);
-                }
-                catch (NumberFormatException ignored)
-                {
-                    // ignore invalid port
-                }
-            }
-            else if ("server_name".equals(d.name) && current != null && !d.args.isEmpty())
-            {
-                current.serverName = d.args.get(0);
-            }
-            else if ("return".equals(d.name) && current != null && d.args.size() >= 2)
-            {
-                current.responseBody = d.args.get(1);
-            }
-        }
+    //     for (Directive d : directives)
+    //     {
+    //         if ("server".equals(d.name) && d.args.size() >= 2 && "listen".equals(d.args.get(0)))
+    //         {
+    //             try
+    //             {
+    //                 int port = Integer.parseInt(d.args.get(1));
+    //                 current = new ServerInstance(port);
+    //                 servers.add(current);
+    //             }
+    //             catch (NumberFormatException ignored)
+    //             {
+    //                 // ignore invalid port
+    //             }
+    //         }
+    //         else if ("server_name".equals(d.name) && current != null && !d.args.isEmpty())
+    //         {
+    //             current.serverName = d.args.get(0);
+    //         }
+    //         else if ("return".equals(d.name) && current != null && d.args.size() >= 2)
+    //         {
+    //             current.responseBody = d.args.get(1);
+    //         }
+    //     }
 
-        return servers;
-    }
+    //     return servers;
+    // }
 }
