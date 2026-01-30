@@ -1,6 +1,9 @@
 package com.example.app;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class LocationConfig {
     public String path = "";
@@ -12,7 +15,6 @@ public class LocationConfig {
     public String index = "";
     public boolean autoindex = false;
     public List<LocationConfig> locations = new ArrayList<>();
-
     public String upload_store = "";
     public Map<String, String> cgi = new HashMap<>();
     public String redirection = "";

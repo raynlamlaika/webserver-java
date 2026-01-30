@@ -19,6 +19,41 @@ class App
 {
 
 
+    public static void printAst(List<AstNode> nodes, int indent)
+    {
+        for (AstNode node : nodes) {
+
+            // indent
+            for (int i = 0; i < indent; i++)
+                System.out.print("    ");
+
+            if (node instanceof SimpleDirectiveNode)
+            {
+                SimpleDirectiveNode d = (SimpleDirectiveNode) node;
+                System.out.print(d.name);
+                for (String arg : d.arguments)
+                    System.out.print(" " + arg);
+                System.out.println(";");
+            }
+
+            else if (node instanceof BlockDirectiveNode)
+            {
+                BlockDirectiveNode b = (BlockDirectiveNode) node;
+                System.out.print(b.name);
+                for (String arg : b.arguments)
+                    System.out.print(" " + arg);
+                System.out.println(" {");
+
+                printAst(b.children, indent + 1);
+
+                for (int i = 0; i < indent; i++)
+                    System.out.print("    ");
+                System.out.println("}");
+                
+            }
+        }
+    }
+
 
     public static void main(String argv[])
     {
@@ -101,15 +136,14 @@ class App
 
 
             Parsing listener = new Parsing();
-
-            // 7️⃣ Walk the tree
             ParseTreeWalker.DEFAULT.walk(listener, tree);
+            ConfigAST ast = listener.getAst();
+            // run the server here 
+            printAst(ast.statements, 0);
 
-            // here need to buil in ast object or just in class object hold all of the  data to work with it
-            
+            Server he =  new Server();
+            he.build(ast.statements);
 
-            // here the printer of the config file
-            // void configPrint( ConfigFile listener.configFile);
 
              
             System.out.println("\u001B[32m\t SUCCESS: All good!\u001B[0m");
