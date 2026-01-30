@@ -16,6 +16,8 @@ public class LocationConfig {
     public boolean autoindex = false;
     public List<LocationConfig> locations = new ArrayList<>();
     public String upload_store = "";
+    public String proxy_pass = "";
+    public List<String> try_files = new ArrayList<>();
     public Map<String, String> cgi = new HashMap<>();
     public String redirection = "";
 }

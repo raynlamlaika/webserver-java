@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.util.Scanner;
 import java.util.List;
-import java.util.ArrayList;
 import java.io.*;
 
 // import com.example.app.NginxLexer;
@@ -141,8 +140,8 @@ class App
             // run the server here 
             printAst(ast.statements, 0);
 
-            Server he =  new Server();
-            he.build(ast.statements);
+            List<ServerConfig>  serv = Server.build(ast.statements);
+            Server.runServers(serv);
 
 
              
