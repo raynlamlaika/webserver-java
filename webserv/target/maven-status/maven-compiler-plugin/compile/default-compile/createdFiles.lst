@@ -2,6 +2,7 @@ com/example/app/NginxParser$SimpleDirectiveContext.class
 com/example/app/NginxParser$StatementContext.class
 com/example/app/NginxParser$BlockDirectiveContext.class
 com/example/app/Parsing.class
+com/example/app/Server$1.class
 com/example/app/NginxListener.class
 com/example/app/Server.class
 com/example/app/LocationConfig.class

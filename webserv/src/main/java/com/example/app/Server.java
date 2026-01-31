@@ -1,6 +1,10 @@
 package com.example.app;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +22,54 @@ public class Server
         public static void listenstart(String port,  String server_name) throws IOException //Exception Propagation
         {
             // check for the number format of the port
-            ServerSocket socketa = new ServerSocket(Integer.parseInt(port));
-            socketa.close();
+            int portNumber = Integer.parseInt(port);
+        System.out.println("Starting server '" + server_name + "' on port " + portNumber);
+            ServerSocket socketa = new ServerSocket();
 
 
+            InetSocketAddress bindPoint = new InetSocketAddress("localhost", portNumber);
+            socketa.bind(bindPoint);
+
+            System.out.println("Server bound to address: " + socketa.getLocalSocketAddress());
+            System.out.println("Server is listening on port: " + socketa.getLocalPort());
+
+
+
+            while (true)
+            {
+                // Accept incoming connections
+                var clientSocket = socketa.accept();
+                System.out.println("Accepted connection from: " + clientSocket.getRemoteSocketAddress());
+
+                BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(clientSocket.getInputStream()));
+                String requiestlines;
+                StringBuilder requestBuilder = new StringBuilder();
+                while ((requiestlines = reader.readLine()) != null && !requiestlines.isEmpty()) {
+                            requestBuilder.append(requiestlines).append("\n");
+                        }
+                    System.out.println("Received request:\n" + requestBuilder.toString());
+                // read request and send response
+                String httpResponse = "HTTP/1.1 200 OK\r\n" +
+                                      "Content-Length: 38\r\n" +
+                                      "Content-Type: text/plain\r\n" +
+                                      "\r\n" +
+                                      "Hi there!, This is " + port + "!\n";
+                // clientSocket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
+                // clientSocket.getOutputStream().flush();
+                // // Here you would handle the client connection (e.g., read request, send response)
+                // clientSocket.close(); // Close the client socket after handling
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); // true = auto-flush
+    
+    out.println("HTTP/1.1 200 OK");
+    out.println("Content-Type: text/plain");
+    out.println("Content-Length: 38");
+    out.println(); // Empty line separates headers from body
+    out.println("Hi there!, This is " + port + "!");
+    
+    clientSocket.close();
+            
+            }
         }
         public static void runServers(List<ServerConfig> serv)
         {
@@ -33,18 +81,21 @@ public class Server
                 // lets run that servers 
                 cfg.server_name = cfg.server_name.isEmpty() ? "default_server" : cfg.server_name;
                 List<String> listen = cfg.listen.isEmpty() ? new ArrayList<String>() {{ add("80"); }} : cfg.listen;
-                
-                for (int j = 0 ; listen.size() > j ;j++)
+
+
+                for (int j = 0 ; listen.size() > j ; j++)
                 {
+                    final String currentPort = listen.get(j);
                     System.out.println("Configured server listening on port: " + listen.get(j));
-                    try
-                    {
-                        listenstart(listen.get(j), cfg.server_name);
-                    }
-                    catch (IOException e)
-                    {
-                        System.out.println("Failed to start server on port: " + listen.get(j) + " - " + e.getMessage());
-                    }
+                    Thread thread = new Thread(() -> {
+                        try
+                        {
+                            listenstart(currentPort, cfg.server_name);
+                        } catch (IOException e) {
+                            System.out.println("Failed to start server on port: " + currentPort + " - " + e.getMessage());
+                        }
+                    });
+                    thread.start();
                 }
 
                 System.out.println("Starting server:");

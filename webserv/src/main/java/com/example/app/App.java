@@ -165,11 +165,6 @@ class App
             e.printStackTrace();
         }
 
-
-
-
-
-
     }
 
     // Listener to print visited nodes; helps inspect the parsed nginx config
