@@ -59,10 +59,11 @@ public class Server
                                       "Content-Type: text/plain\r\n" +
                                       "\r\n" +
                                       "Hi there!, This is " + port + "!\n";
-                // clientSocket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
-                // clientSocket.getOutputStream().flush();
-                // // Here you would handle the client connection (e.g., read request, send response)
-                // clientSocket.close(); // Close the client socket after handling
+
+            clientSocket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
+            clientSocket.getOutputStream().flush();
+            // Here you would handle the client connection (e.g., read request, send response)
+            clientSocket.close(); // Close the client socket after handling
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); // true = auto-flush
     
     out.println("HTTP/1.1 200 OK");
