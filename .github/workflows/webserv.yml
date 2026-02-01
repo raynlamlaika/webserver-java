@@ -40,7 +40,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven' #the actual work of it is to cache the maven dependencies in the workflow in the path ~/.m2/repository
-          cache-dependency-path: 'webserv/pom.xml' #specifies the path to the pom.xml file(s) in the repository 
+          # cache-dependency-path: 'webserv/pom.xml' #specifies the path to the pom.xml file(s) in the repository 
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+    
+    
     # now i need to enter the webserv directory to run the maven commands
       - name: Build with Maven
         working-directory: ./webserv
