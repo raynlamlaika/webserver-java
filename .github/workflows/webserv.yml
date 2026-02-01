@@ -1,18 +1,70 @@
-# so here the the practice of our project
+# # so here the the practice of our project
 
 
-#the name stand for the workflow name and 
-# A workflow is composed of:
-#         Triggers → when it runs actually is on push or pull request
-#         Jobs → independent units of work we define using YAML
-#         Steps → shell commands inside a job define the sequence of tasks to be performed
-#         Runners → the machine (Linux, macOS, Windows) that runs the job in gitHub-hosted or self-hosted environment
+# #the name stand for the workflow name and 
+# # A workflow is composed of:
+# #         Triggers → when it runs actually is on push or pull request
+# #         Jobs → independent units of work we define using YAML
+# #         Steps → shell commands inside a job define the sequence of tasks to be performed
+# #         Runners → the machine (Linux, macOS, Windows) that runs the job in gitHub-hosted or self-hosted environment
+
+
+# name: Webserv CI/CD Pipeline
+
+# #here we define the trigger for the workflow
+# # In this case the workflow will be triggered on push or pull request events to the main or master branches
+# on:
+#   push:
+#     branches:
+#       - main
+#       - master
+#   pull_request:
+#     branches:
+#       - main
+#       - master
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+
+# # the uses s a github action that it authenticates with gitHub
+# #Runs git clone of your repository
+# #Checks out the correct branch / commit Places the code in: /home/runner/work/<repository-name>/<repository-name>
+
+#       - name: Set up java environment
+#         uses: actions/setup-java@v4
+#         with:
+#           java-version: '17'
+#           distribution: 'temurin'
+#           cache: 'maven' #the actual work of it is to cache the maven dependencies in the workflow in the path ~/.m2/repository
+#           # cache-dependency-path: 'webserv/pom.xml' #specifies the path to the pom.xml file(s) in the repository 
+#       - name: Cache Maven dependencies
+#         uses: actions/cache@v3
+#         with:
+#           path: ~/.m2/repository
+#           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-
+    
+    
+#     # now i need to enter the webserv directory to run the maven commands
+#       - name: Build with Maven
+#         working-directory: ./webserv
+#         run: make build
+#       #need to add test later on
+
+#       - name: Clean project
+#         working-directory: ./webserv
+#         if : always()  # This ensures that the cleanup step runs regardless of previous step outcomes
+#         run: make fclean
+
 
 
 name: Webserv CI/CD Pipeline
 
-#here we define the trigger for the workflow
-# In this case the workflow will be triggered on push or pull request events to the main or master branches
 on:
   push:
     branches:
@@ -28,36 +80,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-# the uses s a github action that it authenticates with gitHub
-#Runs git clone of your repository
-#Checks out the correct branch / commit Places the code in: /home/runner/work/<repository-name>/<repository-name>
+        uses: actions/checkout@v3
 
       - name: Set up java environment
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'maven' #the actual work of it is to cache the maven dependencies in the workflow in the path ~/.m2/repository
-          # cache-dependency-path: 'webserv/pom.xml' #specifies the path to the pom.xml file(s) in the repository 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-    
-    
-    # now i need to enter the webserv directory to run the maven commands
+          cache: 'maven'
+
       - name: Build with Maven
         working-directory: ./webserv
         run: make build
-      #need to add test later on
 
       - name: Clean project
         working-directory: ./webserv
-        if : always()  # This ensures that the cleanup step runs regardless of previous step outcomes
+        if: always()
         run: make fclean
-
