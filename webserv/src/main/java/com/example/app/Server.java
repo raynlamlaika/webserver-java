@@ -48,8 +48,12 @@ public class Server
                 while ((requiestlines = reader.readLine()) != null && !requiestlines.isEmpty()) {
                             requestBuilder.append(requiestlines).append("\n");
                         }
-                    System.out.println("Received request:\n" + requestBuilder.toString());
+                System.out.println("Received request:\n" + requestBuilder.toString()+ "|YYYYYYYYYYY\n");
                 // read request and send response
+
+                // Request.parseRequest(requestBuilder.toString());
+
+
                 String httpResponse = "HTTP/1.1 200 OK\r\n" +
                                       "Content-Length: 38\r\n" +
                                       "Content-Type: text/plain\r\n" +
