@@ -15,83 +15,87 @@ class Request
 
     // ===== Body =====
     private String body;
+
+    private static void headersPartParcer(Request req, String headerPart)
+    {
+        // Split lines by \r\n
+        String[] lines = headerPart.split("\r\n");
+
+        // ---- Parse request line ----
+        if (lines.length > 0) {
+            String[] startLine = lines[0].split(" ");
+            if (startLine.length >= 3) {
+                req.method = startLine[0];
+                req.path = startLine[1];
+                req.version = startLine[2];
+                System.out.println("✓ method    : " + req.method);
+                System.out.println("✓ path      : " + req.path);
+                System.out.println("✓ version   : " + req.version);
+            } else {
+                System.err.println("✗ Invalid request line: " + lines[0]);
+            }
+        }
+
+        // ---- Parse headers ----
+        for (int i = 1; i < lines.length; i++)
+        {
+            String line = lines[i].trim();
+            System.out.println("LINE[" + i + "]: [" + line + "]");
+            if (line.isEmpty())
+                continue;  // Changed from break to continue
+
+            int colonIndex = line.indexOf(':');
+            if (colonIndex == -1)
+                continue;
+
+            String key = line.substring(0, colonIndex).trim().toLowerCase();
+            String value = line.substring(colonIndex + 1).trim();
+
+            System.out.println("KEY = " + key + " | VALUE = " + value);
+
+            req.headers.put(key, value);
+        }
+        
+        System.out.println("=== All Headers ===");
+        req.headers.forEach((key, value) -> System.out.println(key + " : " + value));
+        System.out.println("=== All Headers ===");
+
+    }
+    private static void bodyPartParcer(Request req, String bodyPart)
+    {
+        System.out.println("=== Body Part ===");
+        System.out.println(bodyPart);
+        System.out.println("=== Body Part ===");
+    }
+
+
     public static Request parseRequest(String request)
     {
         Request req = new Request();
 
         // Split headers and body
         String[] parts = request.split("\r\n\r\n", 2);
-        String headerPart = parts[0];
-        req.body = (parts.length == 2) ? parts[1] : "";
-        System.out.print("BODYY______________________________"+req.body + "\n");
-
         
-        // method      = "GET"
-        // path        = "/"
-        // version     = "HTTP/1.1"
-
-        // headers = {
-        // "accept-encoding": "gzip, deflate, br",
-        // "accept": "*/*",
-        // "user-agent": "Thunder Client (https://www.thunderclient.com)",
-        // "content-type": "application/json",
-        // "host": "127.0.0.1:8181",
-        // "connection": "close"
-        // }
-
-        // host = "127.0.0.1"
-        // port = 8181
-        // body = ""
-        
-    
-
-        // Split lines
-        String[] lines = headerPart.split("\r\n");
-
-        // ---- Parse request line ----
-        String[] startLine = lines[0].split(" ");
-        req.method = startLine[0];
-        req.path = startLine[1];
-        req.version = startLine[2];
-        System.out.print(" methos______________" + req.method + "\n");
-        System.out.print(" mapth______________" + req.path +"\n");
-        System.out.print(" version________________" + req.version + "\n");
-
-        // ---- Parse headers ----
-        // ---- Parse headers ----
-        for (int i = 1; i < lines.length; i++)
-        {
-            System.out.println("LINE[" + i + "]: [" + lines[i] + "]");
-
-            // Empty line = end of headers
-            if (lines[i].isEmpty())
-                break;
-
-            int colonIndex = lines[i].indexOf(':');
-            if (colonIndex == -1)
-                continue;
-
-            String key = lines[i].substring(0, colonIndex).trim().toLowerCase();
-            String value = lines[i].substring(colonIndex + 1).trim();
-
-            System.out.println("KEY = " + key + " | VALUE = " + value);
-
-            req.headers.put(key, value);
+        // ✅ Safe access - check if parts exist before using
+        System.out.println("✓ Parts found: " + parts.length);
+        if (parts.length > 0) {
+            System.out.println("✓ Headers part exists");
         }
-        // for (int i = 1; i < lines.length; i++)
-        // {
-        //     System.out.print("_____________________________"+ lines+"\n");
-        //     int colonIndex = lines[i].indexOf(":");
-        //     if (colonIndex == -1)
-        //         continue;
-
-        //     String key = lines[i].substring(0, colonIndex).trim();
-        //     String value = lines[i].substring(colonIndex + 1).trim();
-        //     System.out.print("KEY " +key+ " _________________________VALU _____"+ value + "\n");
-        //     req.headers.put(key, value);
-
-        // }
-
+        if (parts.length > 1) {
+            System.out.println("✓ Body part exists");
+        }
+        
+        // first part is headers
+        String headerPart = parts[0];
+        headersPartParcer(req, headerPart);
+        
+        // second part is body (if exists)
+        if (parts.length > 1)
+            {req.body = parts[1];bodyPartParcer(req, req.body);}
+        else
+            req.body = "";
+            
+        
         return req;
     }
 
