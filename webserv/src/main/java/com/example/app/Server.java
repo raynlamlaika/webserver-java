@@ -35,46 +35,82 @@ public class Server
 
 
 
-            while (true)
-            {
-                // Accept incoming connections
-                var clientSocket = socketa.accept();
-                System.out.println("Accepted connection from: " + clientSocket.getRemoteSocketAddress());
+            // while (true)
+            // {
+            //     // Accept incoming connections
+            //     var clientSocket = socketa.accept();
+            //     System.out.println("Accepted connection from: " + clientSocket.getRemoteSocketAddress());
 
-                BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream()));
-                String requiestlines;
-                StringBuilder requestBuilder = new StringBuilder();
-                while ((requiestlines = reader.readLine()) != null && !requiestlines.isEmpty()) {
-                            requestBuilder.append(requiestlines).append("\n");
-                        }
-                System.out.println("Received request:\n" + requestBuilder.toString()+ "|YYYYYYYYYYY\n");
-                // read request and send response
+            //     BufferedReader reader = new BufferedReader(
+            //         new InputStreamReader(clientSocket.getInputStream()));
+            //     String requiestlines;
+            //     StringBuilder requestBuilder = new StringBuilder();
+            //     while ((requiestlines = reader.readLine()) != null && !requiestlines.isEmpty()) {
+            //                 requestBuilder.append(requiestlines).append("\r\n");
+            //             }
+            //     // read request and send response
+            //     requestBuilder.append("\r\n");
 
-                // Request.parseRequest(requestBuilder.toString());
+            //     // Request.parseRequest(requestBuilder.toString());
 
-
-                String httpResponse = "HTTP/1.1 200 OK\r\n" +
-                                      "Content-Length: 38\r\n" +
-                                      "Content-Type: text/plain\r\n" +
-                                      "\r\n" +
-                                      "Hi there!, This is " + port + "!\n";
-
-            clientSocket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
-            clientSocket.getOutputStream().flush();
-            // Here you would handle the client connection (e.g., read request, send response)
-            clientSocket.close(); // Close the client socket after handling
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); // true = auto-flush
+            // // Here you would handle the client connection (e.g., read request, send response)
+            //     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); // true = auto-flush
+            //     Request req = Request.parseRequest(requestBuilder.toString());
+            //     out.print("HTTP/1.1 200 OK\r\n");
+            //     out.print("Content-Type: text/plain\r\n");
+            //     out.print("Content-Length: 38\r\n");
+            //     out.print("\r\n"); // Empty line separates headers from body
+            //     out.print("Hi there!, This is " + port + "!");
+            //     out.flush();
     
-    out.println("HTTP/1.1 200 OK");
-    out.println("Content-Type: text/plain");
-    out.println("Content-Length: 38");
-    out.println(); // Empty line separates headers from body
-    out.println("Hi there!, This is " + port + "!");
-    
-    clientSocket.close();
+            //     clientSocket.close();
             
-            }
+            // }
+            while (true)
+{
+    var clientSocket = socketa.accept();
+    System.out.println("Accepted connection from: " + clientSocket.getRemoteSocketAddress());
+
+    BufferedReader reader = new BufferedReader(
+        new InputStreamReader(clientSocket.getInputStream()));
+    String line;
+    StringBuilder requestBuilder = new StringBuilder();
+    int contentLength = 0;
+    
+    // ✅ Read headers
+    while ((line = reader.readLine()) != null && !line.isEmpty()) {
+        requestBuilder.append(line).append("\r\n");
+        
+        // Check for Content-Length header
+        if (line.toLowerCase().startsWith("content-length:")) {
+            contentLength = Integer.parseInt(line.split(":")[1].trim());
+        }
+    }
+    
+    // ✅ Add separator
+    requestBuilder.append("\r\n");
+    
+    // ✅ Read body if Content-Length exists
+    if (contentLength > 0) {
+        char[] bodyChars = new char[contentLength];
+        reader.read(bodyChars, 0, contentLength);
+        requestBuilder.append(bodyChars);
+    }
+
+    Request req = Request.parseRequest(requestBuilder.toString());
+    
+    System.out.println("Body: [" + req.getBody() + "]");
+    
+    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+    out.print("HTTP/1.1 200 OK\r\n");
+    out.print("Content-Type: text/plain\r\n");
+    out.print("Content-Length: 38\r\n");
+    out.print("\r\n");
+    out.print("Hi there!, This is " + port + "!");
+    out.flush();
+
+    clientSocket.close();
+}
         }
         public static void runServers(List<ServerConfig> serv)
         {
