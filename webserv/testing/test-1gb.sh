@@ -5,10 +5,6 @@
 
 echo "🔥 Starting 1GB Load Test..."
 echo "============================="
-echo "⚠️  WARNING: This will send 1GB of data to your server!"
-echo "⚠️  Make sure your server is running and you have enough disk space."
-echo ""
-
 # Check if server is running
 echo "🔍 Checking if server is running on port 8181..."
 if ! curl -s --connect-timeout 3 http://localhost:8181 > /dev/null; then
