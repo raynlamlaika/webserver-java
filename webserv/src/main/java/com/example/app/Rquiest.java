@@ -15,6 +15,7 @@ class Request
 
     // ===== Body =====
     private String body;
+    private String bodyFilePath; // Path to file containing large body data
 
     private static void headersPartParcer(Request req, String headerPart)
     {
@@ -71,6 +72,12 @@ class Request
 
     public static Request parseRequest(String request)
     {
+        return parseRequest(request, null);
+    }
+
+    // Overloaded method to handle file-based body data for large uploads
+    public static Request parseRequest(String request, String bodyFilePath)
+    {
         Request req = new Request();
 
         // Split headers and body
@@ -89,13 +96,20 @@ class Request
         String headerPart = parts[0];
         headersPartParcer(req, headerPart);
         
-        // second part is body (if exists)
-        if (parts.length > 1)
-            {req.body = parts[1];bodyPartParcer(req, req.body);}
-        else
+        // Handle body - either from string or file
+        if (bodyFilePath != null) {
+            // Large body data is in file - store file path instead of loading into memory
+            req.bodyFilePath = bodyFilePath;
+            req.body = "[Large body data in file: " + bodyFilePath + "]";
+            System.out.println("✓ Large body data stored in file: " + bodyFilePath);
+        } else if (parts.length > 1) {
+            // Small body data - handle normally
+            req.body = parts[1];
+            bodyPartParcer(req, req.body);
+        } else {
             req.body = "";
+        }
             
-        
         return req;
     }
 
@@ -105,4 +119,8 @@ class Request
     public String getVersion() { return version; }
     public Map<String, String> getHeaders() { return headers; }
     public String getBody() { return body; }
+    public String getBodyFilePath() { return bodyFilePath; }
+    
+    // Utility method to check if body is in file (for large uploads)
+    public boolean hasBodyInFile() { return bodyFilePath != null; }
 }
