@@ -20,8 +20,7 @@ import java.util.List;
                
 public class Server
 {
-
-    public static void listenstart(String port, String server_name) throws IOException
+    public static void listenstart(String port, String server_name, ServerConfig cfg) throws IOException
     {
         // check for the number format of the port
         int portNumber = Integer.parseInt(port);
@@ -123,46 +122,50 @@ public class Server
 
             // Parse the request with file path for large body data
             Request req = Request.parseRequest(requestBuilder.toString(), bodyFilePath);
-
-
-
-            
-
-            
-            // Read the request body from file to include in response
-            String responseBody = "Hi there!, This is " + port + "!\n\n";
-            responseBody += "=== REQUEST DETAILS ===\n";
-            responseBody += "Headers:\n" + requestBuilder.toString() + "\n";
-            
-            if (bodyFilePath != null) {
-                responseBody += "Body from file (" + bodyFilePath + "):\n";
-                try {
-                    java.io.FileInputStream fileIn = new java.io.FileInputStream(bodyFilePath);
-                    byte[] fileBuffer = new byte[8192];
-                    StringBuilder bodyContent = new StringBuilder();
-                    int bytesRead;
-                    
-                    while ((bytesRead = fileIn.read(fileBuffer)) != -1) {
-                        bodyContent.append(new String(fileBuffer, 0, bytesRead));
-                    }
-                    fileIn.close();
-                    
-                    responseBody += bodyContent.toString();
-                } catch (IOException e) {
-                    responseBody += "Error reading body file: " + e.getMessage();
-                }
-            } else {
-                responseBody += "No body data\n";
-            }
-            
-            // Send response with request data
+            Response response = new Response();
+            String httpResponse = response.response(req, cfg); // Pass actual config
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            out.print("HTTP/1.1 200 OK\r\n");
-            out.print("Content-Type: text/plain\r\n");
-            out.print("Content-Length: " + responseBody.length() + "\r\n");
-            out.print("\r\n");
-            out.print(responseBody);
+            out.print(httpResponse);
             out.flush();
+
+
+            
+
+            
+            // // Read the request body from file to include in response
+            // String responseBody = "Hi there!, This is " + port + "!\n\n";
+            // responseBody += "=== REQUEST DETAILS ===\n";
+            // responseBody += "Headers:\n" + requestBuilder.toString() + "\n";
+            
+            // if (bodyFilePath != null) {
+            //     responseBody += "Body from file (" + bodyFilePath + "):\n";
+            //     try {
+            //         java.io.FileInputStream fileIn = new java.io.FileInputStream(bodyFilePath);
+            //         byte[] fileBuffer = new byte[8192];
+            //         StringBuilder bodyContent = new StringBuilder();
+            //         int bytesRead;
+                    
+            //         while ((bytesRead = fileIn.read(fileBuffer)) != -1) {
+            //             bodyContent.append(new String(fileBuffer, 0, bytesRead));
+            //         }
+            //         fileIn.close();
+                    
+            //         responseBody += bodyContent.toString();
+            //     } catch (IOException e) {
+            //         responseBody += "Error reading body file: " + e.getMessage();
+            //     }
+            // } else {
+            //     responseBody += "No body data\n";
+            // }
+            
+            // // Send response with request data
+            // PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            // out.print("HTTP/1.1 200 OK\r\n");
+            // out.print("Content-Type: text/plain\r\n");
+            // out.print("Content-Length: " + responseBody.length() + "\r\n");
+            // out.print("\r\n");
+            // out.print(responseBody);
+            // out.flush();
 
             clientSocket.close();
             
@@ -288,7 +291,7 @@ public class Server
                     Thread thread = new Thread(() -> {
                         try
                         {
-                            listenstart(currentPort, cfg.server_name);
+                            listenstart(currentPort, cfg.server_name, cfg);
                         } catch (IOException e) {
                             System.out.println("Failed to start server on port: " + currentPort + " - " + e.getMessage());
                         }

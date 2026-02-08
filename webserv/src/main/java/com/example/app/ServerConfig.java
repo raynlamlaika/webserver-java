@@ -13,4 +13,8 @@ public class ServerConfig
     public List<String> try_files = new ArrayList<>();
     public boolean autoindex = false;
     public List<LocationConfig> locations = new ArrayList<>();
+
+    public String getDocumentRoot() {
+        return root.isEmpty() ? "./public" : root;
+    }
 }
