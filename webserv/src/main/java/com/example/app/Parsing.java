@@ -80,14 +80,10 @@ import java.util.*;
 import org.antlr.v4.runtime.tree.*;
     
 public class Parsing extends NginxBaseListener {
-
-    // Root AST
     private final ConfigAST ast = new ConfigAST();
 
-    // Stack that tracks where statements are added
     private final Deque<List<AstNode>> stack = new ArrayDeque<>();
 
-    // Expose AST after parsing
     public ConfigAST getAst()
     {
         return ast;

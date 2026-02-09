@@ -22,9 +22,8 @@ class Response
         if (url.equals("/"))
         {
             System.out.println("Serving index.html");
-            // Serve index.html from the configured document root
             String documentRoot = cfg.getDocumentRoot();
-            url = "/index.html"; // Default to index.html for root path
+            url = "/index.html";
         }
         
         try {
@@ -61,11 +60,16 @@ class Response
     }
 
 
-    // static void postmethod(Request req, ServerConfig cfg)
-    // {
-    //     String url = req.getPath();
-    //     System.out.println("POST URL: " + url);
-    // }
+    static String postmethod(Request req, ServerConfig cfg)
+    {
+        String url = req.getPath();
+        System.out.println("POST URL: " + url);
+
+
+        return req.getVersion() + " 200 OK\r\n" +
+            "Content-Type: text/plain\r\n\r\n" +
+            "POST request received for " + url;
+    }
     
     static public String response(Request req, ServerConfig cfg)
     {
@@ -86,7 +90,7 @@ class Response
         }
         else if (method.equals("POST"))
         {
-            return version + " 405 Method Not Allowed\r\nContent-Type: text/plain\r\n\r\nMethod Not Allowed"; //postmethod(req, cfg);
+            return postmethod(req, cfg);
         }
         else
         {

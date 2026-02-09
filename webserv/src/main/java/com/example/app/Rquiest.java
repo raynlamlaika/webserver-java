@@ -80,10 +80,8 @@ class Request
     {
         Request req = new Request();
 
-        // Split headers and body
         String[] parts = request.split("\r\n\r\n", 2);
         
-        // ✅ Safe access - check if parts exist before using
         System.out.println("✓ Parts found: " + parts.length);
         if (parts.length > 0) {
             System.out.println("✓ Headers part exists");
@@ -92,13 +90,10 @@ class Request
             System.out.println("✓ Body part exists");
         }
         
-        // first part is headers
         String headerPart = parts[0];
         headersPartParcer(req, headerPart);
         
-        // Handle body - either from string or file
         if (bodyFilePath != null) {
-            // Large body data is in file - store file path instead of loading into memory
             req.bodyFilePath = bodyFilePath;
             req.body = "[Large body data in file: " + bodyFilePath + "]";
             System.out.println("✓ Large body data stored in file: " + bodyFilePath);
@@ -121,6 +116,5 @@ class Request
     public String getBody() { return body; }
     public String getBodyFilePath() { return bodyFilePath; }
     
-    // Utility method to check if body is in file (for large uploads)
     public boolean hasBodyInFile() { return bodyFilePath != null; }
 }
