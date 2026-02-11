@@ -1,0 +1,28 @@
+# Maven
+target/
+dependency-reduced-pom.xml
+
+# Git
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Other
+README.md
+docker-compose.yml
+
+
+

@@ -1,5 +1,18 @@
-.PHONY: all build clean test run help fclean re package watch
+.PHONY: all build clean test run help fclean re package watch dep
 
+
+dep:
+	@echo "[DEP] Installing system dependencies..."
+	@if command -v yum >/dev/null 2>&1; then \
+	    yum update -y && yum install -y inotify-tools || yum install -y epel-release && yum install -y inotify-tools; \
+	elif command -v microdnf >/dev/null 2>&1; then \
+	    microdnf update -y && microdnf install -y epel-release && microdnf install -y inotify-tools; \
+	elif command -v apt-get >/dev/null 2>&1; then \
+	    apt-get update && apt-get install -y inotify-tools; \
+	fi
+	@echo "[DEP] Dependencies installed"
+
+	
 # Default target
 all: build
 
@@ -69,3 +82,4 @@ help:
 	@echo "  fclean             - Full clean (like 42 school)"
 	@echo "  re                 - Rebuild everything"
 	@echo "  help               - Show this message"
+

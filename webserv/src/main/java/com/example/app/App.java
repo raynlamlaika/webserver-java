@@ -60,10 +60,20 @@ class App
             } 
             else
             {
-                Scanner objScan = new Scanner(System.in);
-                System.out.print("Enter config file path: ");
-                pathConfg = objScan.nextLine();
-                objScan.close();
+                // Default config file for Docker/containerized environments
+                pathConfg = "test.conf";// hard code willb e dynamic based on the input from the user or the default one
+                System.out.println("No config file specified, using default: " + pathConfg);
+                
+                // Only try interactive input if we're in a real terminal
+                if (System.console() != null) {
+                    Scanner objScan = new Scanner(System.in);
+                    System.out.print("Enter config file path (or press Enter for default): ");
+                    String input = objScan.nextLine().trim();
+                    if (!input.isEmpty()) {
+                        pathConfg = input;
+                    }
+                    objScan.close();
+                }
             }
 
             System.out.println("thinis te path: "+ pathConfg);

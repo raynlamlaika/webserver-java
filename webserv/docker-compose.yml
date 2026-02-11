@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  webserv:
+    build: .
+    ports:
+      - "8181:8181"
+      - "8282:8282"
+    volumes:
+      - ./test.conf:/app/test.conf:ro
+      - ./public:/app/public:ro
+    environment:
+      - JAVA_OPTS=-Xmx256m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8181/ || curl -f http://localhost:8282/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
