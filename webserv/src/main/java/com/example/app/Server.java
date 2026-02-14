@@ -84,6 +84,13 @@ public class Server
             // Handle body with file stream to avoid blocking on large data
             String bodyFilePath = null;
             if (contentLength > 0) {
+                // Create tmp directory if it doesn't exist
+                java.io.File tmpDir = new java.io.File("tmp");
+                if (!tmpDir.exists()) {
+                    tmpDir.mkdirs();
+                    System.out.println("Created tmp directory: " + tmpDir.getAbsolutePath());
+                }
+                
                 // Create unique file per request to avoid conflicts - store in tmp folder
                 bodyFilePath = "tmp/upload_" + System.currentTimeMillis() + "_" + 
                               Thread.currentThread().getId() + ".tmp";
