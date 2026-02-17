@@ -21,22 +21,17 @@ class Response
         String body = req.getBody();
         String bodyFilePath = req.getBodyFilePath();
         
-        System.out.println("=== GET Request Processing ===");
-        System.out.println("GET URL: " + url);
-        System.out.println("Headers: " + req.getHeaders());
-        
-        // Handle GET request body (for 42 webserv compliance)
         if (body != null && !body.trim().isEmpty()) {
-            System.out.println("WARNING: GET request contains body data: " + 
-                              body.substring(0, Math.min(100, body.length())));
+            System.out.println("WARNING: GET request contains body data: " + body.substring(0, Math.min(100, body.length())));
         }
         
-        if (bodyFilePath != null && !bodyFilePath.isEmpty()) {
+        if (bodyFilePath != null && !bodyFilePath.isEmpty())
+        {
             System.out.println("WARNING: GET request has body file: " + bodyFilePath);
-            try {
+            try
+            {
                 String fileBody = Files.readString(new File(bodyFilePath).toPath());
-                System.out.println("Body from file preview: " + 
-                                  fileBody.substring(0, Math.min(100, fileBody.length())));
+                // System.out.println("Body from file preview: " +  fileBody.substring(0, Math.min(100, fileBody.length())));
             } catch (IOException e) {
                 System.err.println("Error reading body file: " + e.getMessage());
             }
@@ -50,27 +45,13 @@ class Response
         
         try {
             String filePath = cfg.getDocumentRoot() + url;
-            System.out.println("Document Root: " + cfg.getDocumentRoot());
-            System.out.println("Requested URL: " + url);
-            System.out.println("Full File Path: " + filePath);
             
             File file = new File(filePath);
-            System.out.println("File exists: " + file.exists());
-            System.out.println("Is file: " + file.isFile());
-            System.out.println("Is directory: " + file.isDirectory());
-            System.out.println("Absolute path: " + file.getAbsolutePath());
-            System.out.println("Can read: " + file.canRead());
             
             if (file.exists() && file.isFile()) {
                 // Read file content
                 String content = Files.readString(file.toPath());
                 String mimeType = getMimeType(filePath);
-                
-                System.out.println("✓ File served successfully");
-                System.out.println("File size: " + content.length() + " bytes");
-                System.out.println("MIME type: " + mimeType);
-                
-                // Return HTTP response with proper headers
                 return req.getVersion() + " 200 OK\r\n" +
                     "Content-Type: " + mimeType + "\r\n" +
                     "Content-Length: " + content.length() + "\r\n" +
@@ -78,11 +59,9 @@ class Response
                     "Connection: keep-alive\r\n\r\n" +
                     content;
                     
-            } else if (file.exists() && file.isDirectory()) {
-                // Directory listing or index file handling
-                System.out.println("Directory access attempted: " + filePath);
+            }
+            else if (file.exists() && file.isDirectory()) {
                 
-                // Try to serve index.html from directory
                 File indexFile = new File(file, "index.html");
                 if (indexFile.exists() && indexFile.isFile()) {
                     String content = Files.readString(indexFile.toPath());
@@ -100,7 +79,8 @@ class Response
                         "Content-Length: " + errorMsg.length() + "\r\n\r\n" +
                         errorMsg;
                 }
-            } else {
+            }
+            else {
                 // File not found
                 System.out.println("✗ File not found: " + filePath);
                 String errorMsg = "404 Not Found - The requested resource was not found on this server.";
@@ -184,7 +164,8 @@ class Response
     private static String handleFileUpload(Request req, ServerConfig cfg, String body) {
         try {
             // Create uploads directory if it doesn't exist
-            String uploadDir = cfg.getDocumentRoot() + "/uploads";
+            // String uploadDir = cfg.getDocumentRoot() + "/uploads";
+            String uploadDir = "/home/rlamlaik/java/webserv/uploads";
             File uploadDirFile = new File(uploadDir);
             if (!uploadDirFile.exists()) {
                 uploadDirFile.mkdirs();
@@ -237,13 +218,6 @@ class Response
         String body = req.getBody();
         String bodyFilePath = req.getBodyFilePath();
         
-        System.out.println("=== HTTP Request Processing ===");
-        System.out.println("Method: " + (method != null ? method : "NULL"));
-        System.out.println("Path: " + (path != null ? path : "NULL"));
-        System.out.println("Version: " + (version != null ? version : "NULL"));
-        System.out.println("Body: " + (body != null ? body.substring(0, Math.min(100, body.length())) + "..." : "null"));
-        System.out.println("Body File Path: " + (bodyFilePath != null ? bodyFilePath : "null"));
-        System.out.println("Headers: " + req.getHeaders());
         
         // Validate request components
         if (method == null || method.isEmpty()) {
@@ -253,7 +227,6 @@ class Response
                 "Content-Length: " + errorMsg.length() + "\r\n\r\n" +
                 errorMsg;
         }
-        
         if (path == null || path.isEmpty()) {
             String errorMsg = "400 Bad Request - Missing request path";
             return (version != null ? version : "HTTP/1.1") + " 400 Bad Request\r\n" +

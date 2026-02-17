@@ -1,5 +1,8 @@
 package com.example.app;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +44,6 @@ class Request
         for (int i = 1; i < lines.length; i++)
         {
             String line = lines[i].trim();
-            System.out.println("LINE[" + i + "]: [" + line + "]");
             if (line.isEmpty())
                 continue;  // Changed from break to continue
 
@@ -51,8 +53,6 @@ class Request
 
             String key = line.substring(0, colonIndex).trim().toLowerCase();
             String value = line.substring(colonIndex + 1).trim();
-
-            System.out.println("KEY = " + key + " | VALUE = " + value);
 
             req.headers.put(key, value);
         }
@@ -67,6 +67,9 @@ class Request
         System.out.println("=== Body Part ===");
         System.out.println(bodyPart);
         System.out.println("=== Body Part ===");
+
+        // Print the body content for debugging
+        System.out.println("Body Content: " + bodyPart);
     }
 
 
@@ -93,12 +96,26 @@ class Request
         String headerPart = parts[0];
         headersPartParcer(req, headerPart);
         
-        if (bodyFilePath != null) {
+        if (bodyFilePath != null)
+        {
             req.bodyFilePath = bodyFilePath;
             req.body = "[Large body data in file: " + bodyFilePath + "]";
-            System.out.println("✓ Large body data stored in file: " + bodyFilePath);
-        } else if (parts.length > 1) {
-            // Small body data - handle normally
+            System.out.println("Large body data stored in file: " + bodyFilePath);
+
+            // Read the file content in a loop
+            try (BufferedReader reader = new BufferedReader(new FileReader(bodyFilePath)))
+            {
+                String line;
+                System.out.println("=== File Content ===");
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                System.out.println("=== End of File Content ===");
+            } catch (IOException e) {
+                System.err.println("Error reading file: " + e.getMessage());
+            }
+        } 
+        else if (parts.length > 1) {
             req.body = parts[1];
             bodyPartParcer(req, req.body);
         } else {
@@ -108,7 +125,8 @@ class Request
         return req;
     }
 
-    // ===== Getters =====
+
+
     public String getMethod() { return method; }
     public String getPath() { return path; }
     public String getVersion() { return version; }
